@@ -386,7 +386,9 @@
                 }
             });
 
-            setTimerBtn.addEventListener('click', () => {
+            let isSleepTimerActive = false;
+
+    setTimerBtn.addEventListener('click', () => {
         const minutes = parseInt(minutesInput.value) || 0;
         const seconds = parseInt(secondsInput.value) || 0;
         
@@ -397,13 +399,14 @@
         
         errorMessage.style.display = 'none';
         timerModal.classList.remove('active');
+        isSleepTimerActive = true;
         
         const totalTime = (minutes * 60 + seconds) * 1000;
         
         if (sleepTimeout) clearTimeout(sleepTimeout);
         
         sleepTimeout = setTimeout(() => {
-            // Остановка воспроизведения
+            // Остановка плеера
             audioPlayer.pause();
             audioPlayer.src = '';
             
@@ -412,15 +415,20 @@
                 eventSource.close();
                 eventSource = null;
             }
-            
-            // Попытка закрыть вкладку
-            try {
-                window.close();
-            } catch (e) {
-                // Если закрытие невозможно, просто останавливаем плеер
-                updateTrackInfo('Таймер сработал', 'Вкладка не может быть закрыта');
-                playIcon.classList.replace('fa-pause', 'fa-play');
-            }
+
+            // Обновление информации
+            updateTrackInfo('Таймер сна активирован', 'Вкладка закроется через 3 секунды...');
+            playIcon.classList.replace('fa-pause', 'fa-play');
+
+            // Задержка перед закрытием
+            setTimeout(() => {
+                try {
+                    window.close();
+                } catch (e) {
+                    updateTrackInfo('Закройте вкладку вручную', 'Таймер сработал!');
+                }
+            }, 3000);
+
         }, totalTime);
     });
 
