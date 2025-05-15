@@ -387,25 +387,42 @@
             });
 
             setTimerBtn.addEventListener('click', () => {
-                const minutes = parseInt(minutesInput.value) || 0;
-                const seconds = parseInt(secondsInput.value) || 0;
-                
-                if ((minutes === 0 && seconds === 0) || seconds > 59) {
-                    errorMessage.style.display = 'block';
-                    return;
-                }
-                
-                errorMessage.style.display = 'none';
-                timerModal.classList.remove('active');
-                
-                const totalTime = (minutes * 60 + seconds) * 1000;
-                
-                if (sleepTimeout) clearTimeout(sleepTimeout);
-                
-                sleepTimeout = setTimeout(() => {
-                    window.close();
-                }, totalTime);
-            });
+        const minutes = parseInt(minutesInput.value) || 0;
+        const seconds = parseInt(secondsInput.value) || 0;
+        
+        if ((minutes === 0 && seconds === 0) || seconds > 59) {
+            errorMessage.style.display = 'block';
+            return;
+        }
+        
+        errorMessage.style.display = 'none';
+        timerModal.classList.remove('active');
+        
+        const totalTime = (minutes * 60 + seconds) * 1000;
+        
+        if (sleepTimeout) clearTimeout(sleepTimeout);
+        
+        sleepTimeout = setTimeout(() => {
+            // Остановка воспроизведения
+            audioPlayer.pause();
+            audioPlayer.src = '';
+            
+            // Закрытие соединения с метаданными
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+            
+            // Попытка закрыть вкладку
+            try {
+                window.close();
+            } catch (e) {
+                // Если закрытие невозможно, просто останавливаем плеер
+                updateTrackInfo('Таймер сработал', 'Вкладка не может быть закрыта');
+                playIcon.classList.replace('fa-pause', 'fa-play');
+            }
+        }, totalTime);
+    });
 
             // Управление плеером
             playBtn.addEventListener('click', async () => {
