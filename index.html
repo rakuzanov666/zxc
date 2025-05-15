@@ -291,9 +291,15 @@
             }
 
             function updateTrackInfo(title, artist) {
-                document.getElementById('songTitle').textContent = title || 'Радио онлайн';
-                document.getElementById('songArtist').textContent = artist || 'Онлайн вещание';
-            }
+            const displayTitle = title || 'Радио онлайн';
+            const displayArtist = artist || 'Онлайн вещание';
+            
+            document.getElementById('songTitle').textContent = displayTitle;
+            document.getElementById('songArtist').textContent = displayArtist;
+            
+            // Обновляем заголовок вкладки
+            document.title = `${displayTitle}${displayArtist ? ' - ' + displayArtist : ''}`;
+        }
 
             volumeSlider.addEventListener('input', () => {
                 audioPlayer.volume = volumeSlider.value;
