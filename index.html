@@ -386,9 +386,7 @@
                 }
             });
 
-            let isSleepTimerActive = false;
-
-    setTimerBtn.addEventListener('click', () => {
+            setTimerBtn.addEventListener('click', () => {
         const minutes = parseInt(minutesInput.value) || 0;
         const seconds = parseInt(secondsInput.value) || 0;
         
@@ -399,14 +397,13 @@
         
         errorMessage.style.display = 'none';
         timerModal.classList.remove('active');
-        isSleepTimerActive = true;
         
         const totalTime = (minutes * 60 + seconds) * 1000;
         
         if (sleepTimeout) clearTimeout(sleepTimeout);
         
         sleepTimeout = setTimeout(() => {
-            // Остановка плеера
+            // Остановка воспроизведения
             audioPlayer.pause();
             audioPlayer.src = '';
             
@@ -415,20 +412,15 @@
                 eventSource.close();
                 eventSource = null;
             }
-
-            // Обновление информации
-            updateTrackInfo('Таймер сна активирован', 'Вкладка закроется через 3 секунды...');
-            playIcon.classList.replace('fa-pause', 'fa-play');
-
-            // Задержка перед закрытием
-            setTimeout(() => {
-                try {
-                    window.close();
-                } catch (e) {
-                    updateTrackInfo('Закройте вкладку вручную', 'Таймер сработал!');
-                }
-            }, 3000);
-
+            
+            // Попытка закрыть вкладку
+            try {
+                window.close();
+            } catch (e) {
+                // Если закрытие невозможно, просто останавливаем плеер
+                updateTrackInfo('Таймер сработал', 'Вкладка не может быть закрыта');
+                playIcon.classList.replace('fa-pause', 'fa-play');
+            }
         }, totalTime);
     });
 
@@ -515,6 +507,19 @@
                 if (eventSource) eventSource.close();
             });
         });
-    </script>
+    
+window.togglePlay = function() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playIcon = document.getElementById('playIcon');
+
+    if (audioPlayer.paused) {
+        audioPlayer.play();
+        playIcon.classList.replace('fa-play', 'fa-pause');
+    } else {
+        audioPlayer.pause();
+        playIcon.classList.replace('fa-pause', 'fa-play');
+    }
+};
+</script>
 </body>
 </html>
