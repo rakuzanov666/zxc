@@ -508,10 +508,10 @@
             });
         });
     
-window.togglePlay = function() {
+window.togglePlay = function () {
     const audioPlayer = document.getElementById('audioPlayer');
     const playIcon = document.getElementById('playIcon');
-
+    if (!audioPlayer) return;
     if (audioPlayer.paused) {
         audioPlayer.play();
         playIcon.classList.replace('fa-play', 'fa-pause');
