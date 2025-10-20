@@ -1210,6 +1210,39 @@ class TGBot:
             commands = [BotCommand(f"/{i}", _(self.commands[i], language=lang)) for i in self.commands]
             self.bot.set_my_commands(commands, language_code=lang)
 
+    def edit_bot(self):
+        """
+        Изменяет описания и название бота.
+        """
+
+        name = self.bot.get_me().full_name
+        limit = 64
+        add_to_name = ["FunPay"]
+        new_name = name
+        if "vertex" in new_name.lower():
+            new_name = ""
+        new_name = new_name.split("ㅤ")[0].strip()
+        if "funpay" not in new_name.lower():
+            for m_name in add_to_name:
+                if len(new_name) + 2 + len(m_name) <= limit:
+                    new_name = f"{(new_name + ' ').ljust(limit - len(m_name) - 1, 'ㅤ')} {m_name}"
+                    break
+            if new_name != name:
+                self.bot.set_my_name(new_name)
+        sh_text = "funpay seller @apathiaaaa"
+        res = self.bot.get_my_short_description().short_description
+        if res != sh_text:
+            self.bot.set_my_short_description(sh_text)
+        for i in [None, *localizer.languages.keys()]:
+            res = self.bot.get_my_description(i).description
+            text = _("adv_description", self.cardinal.VERSION, language=i)
+            if res != text:
+                self.bot.set_my_description(text, language_code=i)
+
+    def init(self):
+        self.__register_handlers()
+        logger.info(_("log_tg_initialized"))
+
     def run(self):
         """
         Запускает поллинг.
